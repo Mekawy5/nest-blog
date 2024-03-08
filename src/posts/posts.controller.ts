@@ -12,6 +12,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthenticationGuard } from '../authentication/jwt-authentication.guard';
+import { FindOneParams } from '../utils/findOneParams';
 
 @Controller('posts')
 @UseGuards(JwtAuthenticationGuard)
@@ -28,8 +29,10 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
+  // Please note that we don’t use @Param('id') anymore here. Instead, we destructure the whole params object.
+  // this is because we use Validating params class
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param() { id }: FindOneParams) {
     return this.postsService.findOne(+id);
   }
 
