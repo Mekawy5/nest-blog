@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   Res,
+  SerializeOptions,
   UseGuards,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
@@ -17,6 +18,7 @@ import { Request, Response } from 'express';
 import { JwtAuthenticationGuard } from './jwt-authentication.guard';
 
 @Controller('authentication')
+@SerializeOptions({ strategy: 'excludeAll' })
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
@@ -28,12 +30,12 @@ export class AuthenticationController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
-  async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
+  async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
-    response.setHeader('Set-Cookie', cookie);
-    user.password = undefined;
-    return response.send(user);
+    // use the request.res object instead of the  @Res() decorator in func parameter don't put NestJS into the express-specific mode.
+    request.res.setHeader('Set-Cookie', cookie);
+    return user;
   }
 
   @Post('log-out')

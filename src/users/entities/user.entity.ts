@@ -1,20 +1,20 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 @Entity()
 class User {
   @PrimaryGeneratedColumn()
-  @Exclude({ toPlainOnly: true })
   public id?: number;
 
   @Column({ unique: true })
+  @Expose()
   public email: string;
 
   @Column()
+  @Expose()
   public name: string;
 
   @Column()
-  @Exclude({ toPlainOnly: true })
   public password: string;
 }
 
