@@ -21,12 +21,10 @@ export class AuthenticationService {
       10,
     );
     try {
-      const createdUser = await this.usersService.create({
+      return await this.usersService.create({
         ...registrationData,
         password: hashedPassword,
       });
-      createdUser.password = undefined;
-      return createdUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
@@ -46,7 +44,6 @@ export class AuthenticationService {
     try {
       const user = await this.usersService.findByEmail(email);
       await this.verifyPassword(password, user.password);
-      user.password = undefined;
       return user;
     } catch (error) {
       throw new HttpException(

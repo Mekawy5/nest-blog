@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -33,5 +33,9 @@ export class UsersService {
       'User with this id does not exist',
       HttpStatus.NOT_FOUND,
     );
+  }
+
+  findAll() {
+    return this.usersRepository.find();
   }
 }
