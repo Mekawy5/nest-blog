@@ -1,5 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Transform } from 'class-transformer';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinTable,
+} from 'typeorm';
+import User from '../../users/entities/user.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity()
 export class Post {
@@ -12,11 +20,12 @@ export class Post {
   @Column()
   public content: string;
 
-  @Column({ nullable: true })
-  @Transform((params) => {
-    if (params.value != null) {
-      return params.value;
-    }
+  @ManyToOne(() => User, (author: User) => author.posts)
+  public author: User;
+
+  @ManyToMany(() => Category, (category: Category) => category.posts, {
+    cascade: true,
   })
-  public category?: string;
+  @JoinTable()
+  public categories: Category[];
 }

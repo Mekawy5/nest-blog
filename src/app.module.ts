@@ -10,6 +10,7 @@ import * as Joi from 'joi';
 import { ExceptionsLoggerFilter } from './utils/exceptionsLogger.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './utils/httpException.filter';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { HttpExceptionFilter } from './utils/httpException.filter';
     DatabaseModule,
     UsersModule,
     AuthenticationModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [

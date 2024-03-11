@@ -3,26 +3,54 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from "typeorm";
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
+import User from '../users/entities/user.entity';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
   ) {}
-  async create(createPostDto: CreatePostDto) {
-    const newPost = this.postRepository.create(createPostDto);
+
+  async create(createPostDto: CreatePostDto, user: User) {
+    const categoriesIds =
+      createPostDto.categories?.map((category) => category.id) || [];
+
+    const categories = await this.categoryRepository.find({
+      where: {
+        id: In(categoriesIds),
+      },
+    });
+
+    const newPost = this.postRepository.create({
+      ...createPostDto,
+      author: user,
+      categories: categories,
+    });
+
     await this.postRepository.save(newPost);
     return newPost;
   }
 
   async findAll() {
-    return this.postRepository.find();
+    return this.postRepository.find({ relations: ['author', 'categories'] });
   }
 
   async findOne(id: number) {
-    const post = await this.postRepository.findOneBy({ id });
+    const post = await this.postRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        author: true,
+        categories: true,
+      },
+    });
+
     if (post) {
       return post;
     }
@@ -32,7 +60,15 @@ export class PostsService {
 
   async update(id: number, updatePostDto: UpdatePostDto) {
     await this.postRepository.update(id, updatePostDto);
-    const updatedPost = this.postRepository.findOneBy({ id });
+    const updatedPost = this.postRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        author: true,
+      },
+    });
+
     if (updatedPost) {
       return updatedPost;
     }
