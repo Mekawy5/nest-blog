@@ -25,6 +25,10 @@ class User {
   @Exclude()
   public password: string;
 
+  @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  public currentHashedRefreshToken?: string;
+
   @OneToOne(() => Address, {
     eager: true, // always load the relation
     cascade: true, // save address with saving user

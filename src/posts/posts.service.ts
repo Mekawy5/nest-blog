@@ -3,7 +3,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
-import { In, Repository } from "typeorm";
+import { In, Repository } from 'typeorm';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
 import User from '../users/entities/user.entity';
 import { Category } from '../categories/entities/category.entity';
