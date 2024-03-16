@@ -2,17 +2,23 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from "typeorm";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private readonly dataSource: DataSource,
   ) {}
   async create(createUserDto: CreateUserDto) {
     const user = this.usersRepository.create(createUserDto);
-    await this.usersRepository.save(user);
+
+    // using transactions for learning
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(user);
+    });
+
     return user;
   }
 

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   JoinTable,
+  Index,
 } from 'typeorm';
 import User from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
@@ -21,6 +22,7 @@ export class Post {
   public content: string;
 
   @ManyToOne(() => User, (author: User) => author.posts)
+  @Index()
   public author: User;
 
   @ManyToMany(() => Category, (category: Category) => category.posts, {
