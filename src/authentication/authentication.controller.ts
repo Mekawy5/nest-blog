@@ -33,6 +33,7 @@ export class AuthenticationController {
   @Post('log-in')
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
+    console.log(user);
     const accessTokenCookie =
       this.authenticationService.getCookieWithJwtAccessToken(user.id);
     const refreshTokenCookie =
